@@ -31,8 +31,11 @@ MAX_CONNECTIONS = 10
 async def listen_binance():
 
     async with websockets.connect(BINANCE_WS) as ws:
+        print("Listening")
         while True:
+            print(1)
             msg = json.loads(await ws.recv())
+            print("Received from Binance:", msg)
             data = msg["data"]
 
             update = {
