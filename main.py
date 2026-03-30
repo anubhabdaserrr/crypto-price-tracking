@@ -16,7 +16,7 @@ app.state.limiter = limiter
 
 # Docs: https://developers.binance.com/docs/binance-spot-api-docs/web-socket-streams
 BINANCE_WS = (
-    "wss://stream.binance.com/stream"
+    "wss://stream.binance.com:9443/stream"
     "?streams=btcusdt@ticker/ethusdt@ticker/bnbusdt@ticker"
 )
 
@@ -31,11 +31,8 @@ MAX_CONNECTIONS = 10
 async def listen_binance():
 
     async with websockets.connect(BINANCE_WS) as ws:
-        print("Listening")
         while True:
-            print(1)
             msg = json.loads(await ws.recv())
-            print("Received from Binance:", msg)
             data = msg["data"]
 
             update = {
