@@ -16,7 +16,7 @@ app.state.limiter = limiter
 
 # Docs: https://developers.binance.com/docs/binance-spot-api-docs/web-socket-streams
 BINANCE_WS = (
-    "wss://stream.binance.com:9443/stream"
+    "wss://stream.binance.com/stream"
     "?streams=btcusdt@ticker/ethusdt@ticker/bnbusdt@ticker"
 )
 
