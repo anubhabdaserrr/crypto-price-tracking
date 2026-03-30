@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Crypto Price Dashboard</title>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+<style>
+
+body{
+    font-family: Arial;
+    background:#0f172a;
+    color:white;
+    text-align:center;
+}
+
+h1{
+    margin-top:20px;
+}
+
+.container{
+    max-width:1200px;
+    width:95%;
+    margin:auto;
+}
+
+table{
+    margin-top:20px;
+    border-collapse:collapse;
+    width:100%;
+    background:#1e293b;
+}
+
+th,td{
+    padding:10px;
+    border-bottom:1px solid #334155;
+}
+
+th{
+    background:#334155;
+}
+
+.price-up{ color:#22c55e; }
+.price-down{ color:#ef4444; }
+
+.graphs{
+    margin-top:30px;
+    display:grid;
+    grid-template-columns:1fr 1fr 1fr;
+    gap:20px;
+}
+
+canvas{
+    background:#1e293b;
+    padding:10px;
+    width:100% !important;
+    height:300px !important;
+}
+
+</style>
+</head>
+
+
+<body>
+
+<h1>Live Crypto Prices (Binance)</h1>
+
+<div class="container">
+
+<table>
+<thead>
+<tr>
+<th>Symbol</th>
+<th>Price</th>
+<th>24h %</th>
+</tr>
+</thead>
+
+<tbody id="priceTable"></tbody>
+</table>
+
+
+<div class="graphs">
+
+<canvas id="btcChart"></canvas>
+<canvas id="ethChart"></canvas>
+<canvas id="bnbChart"></canvas>
+
+</div>
+
+</div>
+
+<script>
+
+const prices = {}
+const table = document.getElementById("priceTable")
+
+function createChart(ctx,label,color){
+
+    return new Chart(ctx,{
+        type:'line',
+        data:{
+            labels:[],
+            datasets:[{
+                label:label,
+                data:[],
+                borderColor:color,
+                borderWidth:2,
+                tension:0.2
+            }]
+        },
+        options:{
+            animation:false,
+            scales:{
+                x:{display:false}
+            },
+            plugins:{
+                legend:{
+                    labels:{color:"white"}
+                }
+            }
+        }
+    })
+
+}
+
+const btcChart = createChart(document.getElementById("btcChart"),"BTCUSDT","#f59e0b")
+const ethChart = createChart(document.getElementById("ethChart"),"ETHUSDT","#3b82f6")
+const bnbChart = createChart(document.getElementById("bnbChart"),"BNBUSDT","#22c55e")
+
+
+const ws = new WebSocket("ws://localhost:8000/ws")
+
+ws.onmessage = (event)=>{
+
+    const data = JSON.parse(event.data)
+
+    const symbol = data.symbol
+    const price = parseFloat(data.price)
+    const change = parseFloat(data.change_24h)
+
+    // ---- TABLE ----
+
+    if(!prices[symbol]){
+
+        const row = document.createElement("tr")
+        row.id = symbol
+
+        row.innerHTML = `
+        <td>${symbol}</td>
+        <td class="price">${price}</td>
+        <td>${change}%</td>
+        `
+
+        table.appendChild(row)
+        prices[symbol] = price
+
+    }else{
+
+        const row = document.getElementById(symbol)
+        const priceCell = row.children[1]
+
+        const oldPrice = prices[symbol]
+
+        priceCell.textContent = price
+
+        if(price > oldPrice){
+            priceCell.className="price-up"
+        }else if(price < oldPrice){
+            priceCell.className="price-down"
+        }
+
+        prices[symbol] = price
+    }
+
+
+    // ---- GRAPHS ----
+
+    function updateChart(chart){
+
+        chart.data.labels.push("")
+        chart.data.datasets[0].data.push(price)
+
+        if(chart.data.labels.length > 40){
+            chart.data.labels.shift()
+            chart.data.datasets[0].data.shift()
+        }
+
+        chart.update()
+    }
+
+    if(symbol==="BTCUSDT") updateChart(btcChart)
+    if(symbol==="ETHUSDT") updateChart(ethChart)
+    if(symbol==="BNBUSDT") updateChart(bnbChart)
+
+}
+
+</script>
+
+</body>
+</html>
