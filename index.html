@@ -130,7 +130,7 @@ const ethChart = createChart(document.getElementById("ethChart"),"ETHUSDT","#3b8
 const bnbChart = createChart(document.getElementById("bnbChart"),"BNBUSDT","#22c55e")
 
 
-const ws = new WebSocket("ws://localhost:8000/ws")
+const ws = new WebSocket("wss://crypto-price-tracking-production.up.railway.app/ws")
 
 ws.onmessage = (event)=>{
 
