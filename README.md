@@ -32,7 +32,12 @@ asyncio.run(test())
 
 ## Configuring backend for local dev server
 
+`git clone` this repo and run the following commands:
+
 `python3.10 -m venv crypto-env`
+
 `source crypto-env/bin/activate`
+
 `pip install -r requirements.txt`
+
 `uvicorn main:app --host 0.0.0.0 --port 8000 --reload`
