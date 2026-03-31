@@ -3,7 +3,7 @@ Crypto Price Tracking using Binance API
 
 Backend has been deployed on Railway [(https://crypto-price-tracking-production.up.railway.app/)](https://crypto-price-tracking-production.up.railway.app/)
 
-Client dashboard has been deployed on Netlify [(https://69cac7d9b67ba4695e35e3d0--harmonious-faun-a861e0.netlify.app/)](https://69cac7d9b67ba4695e35e3d0--harmonious-faun-a861e0.netlify.app/)
+Client dashboard has been deployed on Netlify [(https://harmonious-faun-a861e0.netlify.app/)](https://harmonious-faun-a861e0.netlify.app/)
 
 ![](./assets/ui-demo.png)
 
@@ -41,3 +41,18 @@ asyncio.run(test())
 `pip install -r requirements.txt`
 
 `uvicorn main:app --host 0.0.0.0 --port 8000 --reload`
+
+-----
+
+## Configuring Docker for test environment
+
+1. Rename `test_Dockerfile` to `Dockerfile` *
+2. Build the Docker image: `docker build -t crypto-price-tracking:1.0 .`
+3. Run the Docker container: `docker run -p 8012:8000 --name crypto-v1 -d crypto-price-tracking:1.0`
+4. Backend application runs at `localhost:8012`
+
+![](./assets/docker.png)
+
+N.B.
+1. Deployed version on railway.app isn't containerized.
+2. \* This renaming to `test_Dockerfile` has been done to prevent errors in railway.app deployment.
